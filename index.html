@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Song Player</title>
+    <script type="text/javascript">
+        // Initialize an empty array to store the song requests
+        let songRequests = [];
+
+        // Function to handle the button click event
+        function handleButtonClick() {
+            // Get the value from the text box
+            let songInput = document.getElementById('songInput').value;
+            
+            // Add the input value to the songRequests array if it's not empty
+            if (songInput.trim() !== "") {
+                songRequests.push(songInput);
+                
+                // Clear the text box after storing the input
+                document.getElementById('songInput').value = '';
+                
+                // Update the displayed list of song requests
+                updateSongList();
+                
+                // Simulate typing out the song name and pressing enter
+                simulateTyping(songInput);
+            }
+        }
+
+        // Function to update the displayed list of song requests
+        function updateSongList() {
+            // Get the list element
+            let songList = document.getElementById('songList');
+            
+            // Clear the current list
+            songList.innerHTML = '';
+            
+            // Add each song request as a numbered list item
+            for (let i = 0; i < songRequests.length; i++) {
+                let listItem = document.createElement('li');
+                listItem.textContent = (i + 1) + '. ' + songRequests[i];
+                songList.appendChild(listItem);
+            }
+        }
+
+        // Function to simulate typing out the song name and pressing enter
+        function simulateTyping(text) {
+            const inputEvent = new Event('input', { bubbles: true });
+
+            const target = document.activeElement; // This should be the target input element
+
+            text.split('').forEach((char) => {
+                const event = new KeyboardEvent('keydown', {
+                    key: char,
+                    bubbles: true,
+                });
+                target.dispatchEvent(event);
+                target.value += char;
+                target.dispatchEvent(inputEvent);
+            });
+
+            const enterEvent = new KeyboardEvent('keydown', {
+                key: 'Enter',
+                bubbles: true,
+            });
+            target.dispatchEvent(enterEvent);
+        }
+
+        // Function to handle Enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                handleButtonClick();
+            }
+        }
+
+        // Add event listener for keypress on the text input
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('songInput').addEventListener('keypress', handleKeyPress);
+        });
+    </script>
+</head>
+<body>
+    <h1>Please enter the song you want</h1>
+    <p>The song you request will be queued</p>
+    
+    <!-- Text box for song input -->
+    <input type="text" id="songInput" placeholder="Enter song name">
+    
+    <!-- Button to submit the song request -->
+    <button type="button" onclick="handleButtonClick()">Submit</button>
+    
+    <!-- List to display the current queue -->
+    <h2>Current Queue</h2>
+    <ol id="songList"></ol>
+</body>
+</html>
